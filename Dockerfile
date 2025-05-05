@@ -4,12 +4,9 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Create non-root user for running the container
-# /__w is a folder to be used by the github runner
 RUN groupadd -r user && useradd -r -g user -m -s /bin/bash user && \
     mkdir -p /omni && \
-    mkdir -p /__w/_temp && \
     chown -R user:user /omni && \
-    chown -R user:user /__w/_temp && \
     mkdir -p /opt/easybuild && \
     chown -R user:user /opt/easybuild && \
     chmod 755 /root
@@ -33,17 +30,17 @@ RUN apt-get update && apt-get install -y \
     python3-venv
 
 # Install Miniconda (snakemake needs the conda binary)
-RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-    bash /tmp/miniconda.sh -b -p /opt/conda && \
-    rm /tmp/miniconda.sh && \
-    /opt/conda/bin/conda clean -tipy && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> /etc/bash.bashrc && \
-    echo "conda activate base" >> /etc/bash.bashrc && \
-    chown -R user:user /opt/conda
+# RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+#    bash /tmp/miniconda.sh -b -p /opt/conda && \
+#    rm /tmp/miniconda.sh && \
+#    /opt/conda/bin/conda clean -tipy && \
+#    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+#    echo ". /opt/conda/etc/profile.d/conda.sh" >> /etc/bash.bashrc && \
+#    echo "conda activate base" >> /etc/bash.bashrc && \
+#    chown -R user:user /opt/conda
 
 # Add conda to PATH
-ENV PATH="/opt/conda/bin:$PATH"
+# ENV PATH="/opt/conda/bin:$PATH"
 
 # Install apptainer and dependencies
 RUN apt-get update && add-apt-repository -y ppa:apptainer/ppa \
@@ -67,6 +64,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Initialize Lmod for both interactive and non-interactive shells
+# TODO: copy to user dir
 RUN echo 'source /etc/profile.d/lmod.sh' >> ~/.bashrc && \
     # Create a .profile that sources modules for non-interactive shells
     echo 'source /etc/profile.d/lmod.sh' > ~/.profile && \
