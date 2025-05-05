@@ -7,9 +7,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 # /__w is a folder to be used by the github runner
 RUN groupadd -r user && useradd -r -g user -m -s /bin/bash user && \
     mkdir -p /omni && \
-    mkdir /__w && \
+    mkdir -p /__w/_temp && \
     chown -R user:user /omni && \
-    chown -R user:user /__w && \
+    chown -R user:user /__w/_temp && \
     mkdir -p /opt/easybuild && \
     chown -R user:user /opt/easybuild && \
     chmod 755 /root
